@@ -1,0 +1,48 @@
+apply plugin: 'base'
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+mainClassName = 'hello.HelloWorld'
+
+// tag::repositories[]
+repositories { 
+    mavenCentral() 
+}
+// end::repositories[]
+
+// tag::dependencies[]
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile "joda-time:joda-time:2.2"
+    testCompile "junit:junit:4.12"
+}
+// end::dependencies[]
+
+// tag::wrapper[]
+// end::wrapper[]
+
+task generator(type: Generate) {
+    fileCount = 30
+}
+
+task zip(type: Zip) {
+    from generator
+}
+
+class Generate extends DefaultTask {
+    @Input
+    int fileCount = 10
+
+    @OutputDirectory
+    File generatedFileDir = project.file("generated")
+
+    @TaskAction
+    void perform() {
+        for (int i=0; i<fileCount; i++) {
+            new File(generatedFileDir, "${i}.txt").text = i
+        }
+    }
+}
